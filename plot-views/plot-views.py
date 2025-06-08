@@ -37,13 +37,13 @@ font_files = font_manager.findSystemFonts(fontpaths=font_path)
 for file in font_files:
     font_manager.fontManager.addfont(file)
 plt.rcParams["font.sans-serif"] = "Noto Sans SC"
-plt.rcParams["font.size"] = 15
+plt.rcParams["font.size"] = 18
 
 # 定义辅助函数
 def format_date(x, pos=None):
     date_obj = num2date(x)
-    if date_obj.month == 1:
-        return f"{str(date_obj.year)[2:4]}年1月"
+    if date_obj.month <= 6:
+        return f"{str(date_obj.year)[2:4]}年{date_obj.month}月"
     return (
         f"{date_obj.month}月"
         if (date_obj.year != 2020 or date_obj.month != 7)
@@ -57,10 +57,17 @@ def format_number(x, pos=None):
 
 # 创建图表
 fig, ax = plt.subplots(figsize=(16, 9))
-plt.title("阅读数统计", color="#306FB6")
-ax.plot(dates, views, color="#306FB6", linewidth=1, label="阅读数")
+plt.title("阅读数统计", color="#306FB6", fontsize=24)
+ax.plot(dates, views, color="#306FB6", linewidth=1)
 
-# 设置 Y 轴范围及刻度
+# 设置 X 轴
+ax.set_xlim(dates[0], dates[-1])
+ax.tick_params(axis="x", labelcolor="#8691A5")
+ax.xaxis.set_major_locator(MonthLocator(interval=6))
+ax.xaxis.set_major_formatter(FuncFormatter(format_date))
+ax.xaxis.set_minor_locator(MonthLocator())
+
+# 设置 Y 轴
 max_view = 2000
 if len(dates) > 728:
     max_view = 16000
@@ -72,17 +79,34 @@ if max_view >= 5000:
 else:
     yticks_major = range(1000, max_view, 1000)
 yticks_minor = range(500, max_view, 500)
-
-# 设置 X 轴和 Y 轴标签及刻度格式
-ax.set_xlabel("日期", color="#306FB6")
-ax.tick_params(axis="x", labelcolor="#306FB6")
-ax.tick_params(axis="y", labelcolor="#306FB6", pad=-50)
-ax.xaxis.set_major_locator(MonthLocator(interval=6))
-ax.xaxis.set_major_formatter(FuncFormatter(format_date))
-ax.xaxis.set_minor_locator(MonthLocator())
+ax.tick_params(axis="y", labelcolor="#8691A5", pad=-57.5)
 ax.yaxis.set_major_locator(FixedLocator(yticks_major))
 ax.yaxis.set_major_formatter(FuncFormatter(format_number))
 ax.yaxis.set_minor_locator(FixedLocator(yticks_minor))
+
+# 注明阅读数与日期
+ax.text(
+    0.995,
+    0.985,
+    str(views[-1]),
+    color="#306FB6",
+    fontsize=60,
+    ha="right",
+    va="top",
+    transform=ax.transAxes,
+    alpha=0.7,
+)
+ax.text(
+    0.995,
+    0.89,
+    end_date.strftime("%Y-%m-%d"),
+    color="#8691A5",
+    fontsize=24,
+    ha="right",
+    va="top",
+    transform=ax.transAxes,
+    alpha=0.7,
+)
 
 # 调整布局并保存图片
 plt.tight_layout()

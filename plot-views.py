@@ -1,39 +1,37 @@
+import argparse
 import csv
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
-from matplotlib.dates import DateFormatter, MonthLocator, DayLocator, drange, num2date
+from matplotlib.dates import DateFormatter, MonthLocator, drange, num2date
 from matplotlib.ticker import FixedLocator, FuncFormatter
 
-typ = '阅读数'
+# 命令行参数解析
+parser = argparse.ArgumentParser(description="绘制阅读量统计图并输出为文件")
+parser.add_argument("--year", type=int, default=2025, help="修改结束日期的年份")
+parser.add_argument("--month", type=int, default=6, help="修改结束日期的月份")
+parser.add_argument("--day", type=int, default=1, help="修改结束日期的日期")
+parser.add_argument(
+    "--output", type=str, default="output/view-counts.png", help="输出文件名称"
+)
+args = parser.parse_args()
 
-def format_date(x, pos=None):
-    d = num2date(x)
-    if d.month == 1:
-        return f"{str(d.year)[2:4]}年1月"
-    else:
-        if d.year != 2020 or d.month != 7:
-            return f"{d.month}月"
-        else:
-            return "20年7月"
+# 定义日期范围
+start_date = datetime(2020, 6, 28)
+end_date = datetime(args.year, args.month, args.day)
+dates = drange(start_date, end_date, timedelta(hours=24))
 
-def format_num(x, pos=None):
-    return f"{int(x)}{(2 * (5 - len(str(int(x)))))* ' '}"
-
-date1 = datetime(2020, 6, 28)
-date2 = datetime(2025, 6, 1)
-dates = drange(date1, date2, timedelta(hours=24))
-
-y = []
-with open('data/view.csv') as f:
-    reader = csv.reader(f)
+# 从 CSV 文件中读取数据
+views = []
+with open("data/view.csv") as file:
+    reader = csv.reader(file)
     next(reader)
     for row in reader:
         if len(row) > 1:
-            y.append(int(row[1]))
+            views.append(int(row[1]))
+views = views[: len(dates)]
 
-y = y[0:len(dates)]
-
+# 字体设置
 font_path = "font"
 font_files = font_manager.findSystemFonts(fontpaths=font_path)
 for file in font_files:
@@ -41,26 +39,44 @@ for file in font_files:
 plt.rcParams["font.sans-serif"] = "Noto Sans SC"
 plt.rcParams["font.size"] = 15
 
-fig, ax = plt.subplots()
-ax.plot(dates, y, '#306FB6', linewidth=1, label=typ)
-ax.set_ylim(0, min(max(y), 31000))
-yticks = range(5000, min(max(y), 31000), 5000)
-yticks_minor = range(1000, min(max(y), 31000), 1000)
+# 定义辅助函数
+def format_date(x, pos=None):
+    date_obj = num2date(x)
+    if date_obj.month == 1:
+        return f"{str(date_obj.year)[2:4]}年1月"
+    return (
+        f"{date_obj.month}月"
+        if (date_obj.year != 2020 or date_obj.month != 7)
+        else "20年7月"
+    )
 
-ax.set_xlabel('日期', color='#306FB6')
-ax.tick_params(axis='x', labelcolor='#306FB6')
-ax.tick_params(axis='y', labelcolor='#306FB6', pad=-50)
 
-fig.set_size_inches(16, 9)
-ax.set_xlim(dates[0], dates[-1])
+def format_number(x, pos=None):
+    return f"{int(x)}{(2 * (5 - len(str(int(x)))))* ' '}"
+
+
+# 创建图表
+fig, ax = plt.subplots(figsize=(16, 9))
+plt.title("阅读数统计", color="#306FB6")
+ax.plot(dates, views, color="#306FB6", linewidth=1, label="阅读数")
+
+# 设置 Y 轴范围及刻度
+max_view = min(max(views), 31000)
+ax.set_ylim(0, max_view)
+yticks_major = range(5000, max_view, 5000)
+yticks_minor = range(1000, max_view, 1000)
+
+# 设置 X 轴和 Y 轴标签及刻度格式
+ax.set_xlabel("日期", color="#306FB6")
+ax.tick_params(axis="x", labelcolor="#306FB6")
+ax.tick_params(axis="y", labelcolor="#306FB6", pad=-50)
 ax.xaxis.set_major_locator(MonthLocator(interval=6))
 ax.xaxis.set_major_formatter(FuncFormatter(format_date))
 ax.xaxis.set_minor_locator(MonthLocator())
-ax.yaxis.set_major_locator(FixedLocator(yticks))
-ax.yaxis.set_major_formatter(FuncFormatter(format_num))
+ax.yaxis.set_major_locator(FixedLocator(yticks_major))
+ax.yaxis.set_major_formatter(FuncFormatter(format_number))
 ax.yaxis.set_minor_locator(FixedLocator(yticks_minor))
-fig.tight_layout()
 
-plt.title(f'{typ}统计', color='#306FB6')
-
-plt.savefig('output/edit-view-counts.pdf', dpi = 480, bbox_inches='tight')
+# 调整布局并保存图片
+plt.tight_layout()
+plt.savefig(args.output, dpi=480, bbox_inches="tight")

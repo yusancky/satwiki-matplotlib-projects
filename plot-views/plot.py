@@ -17,12 +17,12 @@ parser.add_argument(
 )
 args = parser.parse_args()
 
-# 定义日期范围
+# 设置时间跨度
 start_date = datetime(2020, 6, 28)
 end_date = datetime(args.year, args.month, args.day)
 dates = drange(start_date, end_date, timedelta(hours=24))
 
-# 从 CSV 文件中读取数据
+# 读取 CSV 数据
 views = []
 with open("data/view.csv") as file:
     reader = csv.reader(file)
@@ -32,7 +32,7 @@ with open("data/view.csv") as file:
             views.append(int(row[1]))
 views = views[: len(dates)]
 
-# 字体设置
+# 设置字体
 font_path = "font"
 font_files = font_manager.findSystemFonts(fontpaths=font_path)
 for file in font_files:
@@ -47,8 +47,8 @@ def format_date(x, pos=None):
         return f"{str(date_obj.year)[2:4]}年{date_obj.month}月"
     return (
         f"{date_obj.month}月"
-        if (date_obj.year != 2020 or date_obj.month != 7)
-        else "20年7月"
+        if date_obj.year != 2020
+        else f"{str(date_obj.year)[2:4]}年{date_obj.month}月"
     )
 
 
@@ -77,8 +77,10 @@ elif len(dates) > 658:
 ax.set_ylim(0, max_view)
 if max_view >= 5000:
     yticks_major = range(2500, max_view, 2500)
-else:
+elif max_view >= 3000:
     yticks_major = range(1000, max_view, 1000)
+else:
+    yticks_major = range(500, max_view, 500)
 yticks_minor = range(500, max_view, 500)
 ax.tick_params(axis="y", labelcolor="#8691A5", pad=-57.5)
 ax.yaxis.set_major_locator(FixedLocator(yticks_major))

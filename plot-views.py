@@ -61,10 +61,17 @@ plt.title("阅读数统计", color="#306FB6")
 ax.plot(dates, views, color="#306FB6", linewidth=1, label="阅读数")
 
 # 设置 Y 轴范围及刻度
-max_view = min(max(views), 31000)
+max_view = 2000
+if len(dates) > 728:
+    max_view = 16000
+elif len(dates) > 658:
+    max_view = 200 * (len(dates) - 658) + 2000
 ax.set_ylim(0, max_view)
-yticks_major = range(5000, max_view, 5000)
-yticks_minor = range(1000, max_view, 1000)
+if max_view >= 5000:
+    yticks_major = range(2500, max_view, 2500)
+else:
+    yticks_major = range(1000, max_view, 1000)
+yticks_minor = range(500, max_view, 500)
 
 # 设置 X 轴和 Y 轴标签及刻度格式
 ax.set_xlabel("日期", color="#306FB6")

@@ -11,6 +11,7 @@ parser = argparse.ArgumentParser(description="绘制阅读量统计图并输出�
 parser.add_argument("--year", type=int, default=2025, help="修改结束日期的年份")
 parser.add_argument("--month", type=int, default=6, help="修改结束日期的月份")
 parser.add_argument("--day", type=int, default=1, help="修改结束日期的日期")
+parser.add_argument("--dpi", type=int, default=480, help="输出文件每英寸点数")
 parser.add_argument(
     "--output", type=str, default="output/view-counts.png", help="输出文件名称"
 )
@@ -57,8 +58,8 @@ def format_number(x, pos=None):
 
 # 创建图表
 fig, ax = plt.subplots(figsize=(16, 9))
-plt.title("阅读数统计", color="#306FB6", fontsize=24)
-ax.plot(dates, views, color="#306FB6", linewidth=1)
+plt.title("阅读数统计", color="#1A60A6", fontsize=24)
+ax.plot(dates, views, color="#1A60A6", linewidth=1)
 
 # 设置 X 轴
 ax.set_xlim(dates[0], dates[-1])
@@ -89,25 +90,25 @@ ax.text(
     0.995,
     0.985,
     str(views[-1]),
-    color="#306FB6",
+    color="#7C4997",
     fontsize=60,
     ha="right",
     va="top",
     transform=ax.transAxes,
-    alpha=0.7,
+    alpha=0.9,
 )
 ax.text(
     0.995,
     0.89,
     end_date.strftime("%Y-%m-%d"),
-    color="#8691A5",
-    fontsize=24,
+    color="#815252",
+    fontsize=20,
     ha="right",
     va="top",
     transform=ax.transAxes,
-    alpha=0.7,
+    alpha=0.9,
 )
 
 # 调整布局并保存图片
 plt.tight_layout()
-plt.savefig(args.output, dpi=480, bbox_inches="tight")
+plt.savefig(args.output, dpi=args.dpi, bbox_inches="tight")

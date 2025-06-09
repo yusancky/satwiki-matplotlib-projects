@@ -41,7 +41,7 @@ def plot(year, month, day, output, dpi):
     # 设置时间跨度
     start_date = datetime(2020, 6, 28)
     end_date = datetime(year, month, day)
-    dates = drange(start_date, end_date, timedelta(hours=24))
+    dates = drange(start_date, end_date + timedelta(days=1), timedelta(days=1))
     days = len(dates)
     views = views_all[:days]
 
@@ -108,6 +108,7 @@ def plot(year, month, day, output, dpi):
     plt.tight_layout()
     for i in output:
         plt.savefig(i, dpi=dpi, bbox_inches="tight")
+    plt.close(fig)
 
 
 if __name__ == "__main__":
@@ -123,7 +124,7 @@ if __name__ == "__main__":
             step = 5
         elif plot_days <= 65 or plot_days > 1617 - 65:
             step = 2
-        print(f"Ploting day {plot_days} for {step} frames.")
+        print(f"Plotting day {plot_days} for {step} frames.")
         plot(
             plot_now.year,
             plot_now.month,

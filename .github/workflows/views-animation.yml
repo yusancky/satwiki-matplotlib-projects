@@ -22,9 +22,9 @@ jobs:
       - run: python main.py
         working-directory: views-animation
       - name: Encode PNGs to MP4
-        run: |
-          ffmpeg -framerate 60 -start_number 1 -i output/%d.png -s 3840x2160 -c:v libx264 -profile:v high -preset slow -crf 18 -pix_fmt yuv420p output/output.mp4
+        run: ffmpeg -framerate 60 -start_number 1 -i output/%d.png -s 3840x2160 -c:v libx264 -profile:v high -preset slow -crf 18 -pix_fmt yuv420p output/output.mp4
+        working-directory: views-animation
       - uses: actions/upload-artifact@v4
         with:
           name: output
-          path: output/output.mp4
+          path: views-animation/output/output.mp4

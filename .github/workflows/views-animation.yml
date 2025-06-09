@@ -18,6 +18,7 @@ jobs:
         run: |
           mkdir -p views-animation/font
           curl -L -o views-animation/font/NotoSansSC-Regular.otf https://github.com/notofonts/noto-cjk/raw/refs/heads/main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf
+      - run: mkdir -p views-animation/output
       - run: python main.py
         working-directory: views-animation
       - name: Encode PNGs to MP4

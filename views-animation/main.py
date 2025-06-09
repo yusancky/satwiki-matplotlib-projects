@@ -26,10 +26,7 @@ views_all = []
 with open("data/view.csv") as file:
     reader = csv.reader(file)
     next(reader)
-    for row in reader:
-        if len(row) > 1:
-            views_all.append(int(row[1]))
-
+    views_all.extend(int(row[1]) for row in reader if len(row) > 1)
 # 设置字体
 font_path = "font"
 font_files = font_manager.findSystemFonts(fontpaths=font_path)

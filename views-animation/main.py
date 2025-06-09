@@ -27,6 +27,7 @@ with open("data/view.csv") as file:
     reader = csv.reader(file)
     next(reader)
     views_all.extend(int(row[1]) for row in reader if len(row) > 1)
+
 # 设置字体
 font_path = "font"
 font_files = font_manager.findSystemFonts(fontpaths=font_path)

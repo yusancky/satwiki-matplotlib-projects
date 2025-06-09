@@ -114,15 +114,15 @@ def plot(year, month, day, output, dpi):
 if __name__ == "__main__":
     plot_now, plot_end, plot_days, plot_frames = (
         datetime(2020, 12, 28),
-        datetime(2025, 6, 1),
+        datetime(2025, 5, 31),
         1,
         1,
     )
     while plot_now <= plot_end:
         step = 1
-        if plot_days <= 5 or plot_days > 1617 - 5:
+        if plot_days <= 5 or plot_days > 1616 - 5:
             step = 5
-        elif plot_days <= 65 or plot_days > 1617 - 65:
+        elif plot_days <= 65 or plot_days > 1616 - 65:
             step = 2
         print(f"Plotting day {plot_days} for {step} frames.")
         plot(

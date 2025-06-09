@@ -1,0 +1,29 @@
+name: Build views animation
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install "matplotlib>=3.9,<3.10"
+      - name: Install FFmpeg
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg
+      - name: Download font
+        run: |
+          mkdir -p views-animation/font
+          curl -L -o views-animation/font/NotoSansSC-Regular.otf https://github.com/notofonts/noto-cjk/raw/refs/heads/main/Sans/SubsetOTF/SC/NotoSansSC-Regular.otf
+      - run: python main.py
+        working-directory: views-animation
+      - name: Encode PNGs to MP4
+        run: |
+          ffmpeg -framerate 60 -start_number 1 -i output/%d.png -s 3840x2160 -c:v libx264 -profile:v high -preset slow -crf 18 -pix_fmt yuv420p output/output.mp4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: output
+          path: output/output.mp4

@@ -42,9 +42,10 @@ plt.rcParams["font.size"] = 18
 def plot(year, month, day, output, dpi):
     # 设置时间跨度
     start_date = datetime(2020, 6, 28)
-    end_date = datetime(args.year, args.month, args.day)
+    end_date = datetime(year, month, day)
     dates = drange(start_date, end_date, timedelta(hours=24))
-    views = views[: len(dates)]
+    days = len(dates)
+    views = views_all[:days]
 
     # 创建图表
     fig, ax = plt.subplots(figsize=(16, 9))
@@ -60,18 +61,22 @@ def plot(year, month, day, output, dpi):
 
     # 设置 Y 轴
     max_view = 2000
-    if len(dates) > 728:
-        max_view = 16000
-    elif len(dates) > 658:
-        max_view = 200 * (len(dates) - 658) + 2000
+    if days < 657:
+        max_view = int(2000 - 1.2 * (658 - days))
+    elif days < 728:
+        max_view = 200 * (days - 658) + 2000
+    else:
+        max_view = int(16000 + 0.5 * (days - 728))
     ax.set_ylim(0, max_view)
     if max_view >= 5000:
-        yticks_major = range(2500, max_view, 2500)
+        yticks_major = range(2000, max_view, 2000)
+        yticks_minor = range(500, max_view, 500)
     elif max_view >= 3000:
         yticks_major = range(1000, max_view, 1000)
+        yticks_minor = range(200, max_view, 200)
     else:
         yticks_major = range(500, max_view, 500)
-    yticks_minor = range(500, max_view, 500)
+        yticks_minor = range(100, max_view, 100)
     ax.tick_params(axis="y", labelcolor="#8691A5", pad=-57.5)
     ax.yaxis.set_major_locator(FixedLocator(yticks_major))
     ax.yaxis.set_major_formatter(FuncFormatter(format_number))
@@ -105,5 +110,6 @@ def plot(year, month, day, output, dpi):
     plt.tight_layout()
     plt.savefig(output, dpi=dpi, bbox_inches="tight")
 
-if __name__ == '__main__:
-    plot(2021, 6, 28, 'output/1.png', 240)
+
+if __name__ == "__main__":
+    plot(2021, 6, 28, "output/1.png", 240)

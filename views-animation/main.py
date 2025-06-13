@@ -39,7 +39,7 @@ def plot(date, output, dpi=240):
     ax.plot(dates, views, color="#1A60A6", linewidth=1)
 
     # 设置 X 轴
-    ax.set_xlim(date_start, plot_now)
+    ax.set_xlim(date_start, date)
     ax.tick_params(axis="x", labelcolor="#8691A5")
     ax.xaxis.set_major_locator(MonthLocator(interval=3))
     ax.xaxis.set_ticklabels([])

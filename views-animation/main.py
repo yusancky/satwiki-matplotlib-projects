@@ -6,17 +6,6 @@ from matplotlib.dates import DateFormatter, MonthLocator, drange, num2date
 from matplotlib.ticker import FixedLocator, FuncFormatter
 
 # 定义辅助函数
-def format_date(x, pos=None):
-    date_obj = num2date(x)
-    if date_obj.month <= 6:
-        return f"{str(date_obj.year)[2:4]}年{date_obj.month}月"
-    return (
-        f"{date_obj.month}月"
-        if date_obj.year != 2020
-        else f"{str(date_obj.year)[2:4]}年{date_obj.month}月"
-    )
-
-
 def format_number(x, pos=None):
     return f"{int(x)}{(2 * (5 - len(str(int(x)))))* ' '}"
 
@@ -54,8 +43,8 @@ def plot(year, month, day, output, dpi):
     ax.set_xlim(dates[0], dates[-1])
     ax.tick_params(axis="x", labelcolor="#8691A5")
     ax.xaxis.set_major_locator(MonthLocator(interval=6))
-    ax.xaxis.set_major_formatter(FuncFormatter(format_date))
     ax.xaxis.set_minor_locator(MonthLocator())
+    ax.xaxis.set_ticklabels([])
 
     # 设置 Y 轴
     max_view = 2000
@@ -77,8 +66,8 @@ def plot(year, month, day, output, dpi):
         yticks_minor = range(100, max_view, 100)
     ax.tick_params(axis="y", labelcolor="#8691A5", pad=-57.5)
     ax.yaxis.set_major_locator(FixedLocator(yticks_major))
-    ax.yaxis.set_major_formatter(FuncFormatter(format_number))
     ax.yaxis.set_minor_locator(FixedLocator(yticks_minor))
+    ax.yaxis.set_major_formatter(FuncFormatter(format_number))
 
     # 注明阅读数与日期
     ax.text(

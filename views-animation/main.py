@@ -2,7 +2,7 @@ import csv
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
-from matplotlib.dates import DateFormatter, MonthLocator, drange
+from matplotlib.dates import DateFormatter, MonthLocator, drange, num2date
 from matplotlib.ticker import FixedLocator, FuncFormatter
 from tqdm import tqdm
 
@@ -11,12 +11,17 @@ def format_number(x, pos=None):
     return f"{int(x)}{(2 * (5 - len(str(int(x)))))* ' '}"
 
 
+# 设置时间跨度
+date_start, date_end = datetime(2020, 6, 28), datetime(2025, 5, 31)
+plot_start = datetime(2020, 12, 28)
+dates = drange(date_start, date_end + timedelta(days=1), timedelta(days=1))
+
 # 读取 CSV 数据
-views_all = []
+views = []
 with open("data/view.csv") as file:
     reader = csv.reader(file)
     next(reader)
-    views_all.extend(int(row[1]) for row in reader if len(row) > 1)
+    views.extend(int(row[1]) for row in reader if len(row) > 1)
 
 # 设置字体
 font_path = "font"
@@ -27,34 +32,27 @@ plt.rcParams["font.sans-serif"] = "Noto Sans SC"
 plt.rcParams["font.size"] = 18
 
 
-def plot(year, month, day, output, dpi):
-    # 设置时间跨度
-    start_date = datetime(2020, 6, 28)
-    end_date = datetime(year, month, day)
-    dates = drange(start_date, end_date + timedelta(days=1), timedelta(days=1))
-    days = len(dates)
-    views = views_all[:days]
-
+def plot(date, output, dpi=240):
     # 创建图表
     fig, ax = plt.subplots(figsize=(16, 9))
     plt.title("阅读数统计", color="#1A60A6", fontsize=24)
     ax.plot(dates, views, color="#1A60A6", linewidth=1)
 
     # 设置 X 轴
-    ax.set_xlim(dates[0], dates[-1])
+    ax.set_xlim(date_start, plot_now)
     ax.tick_params(axis="x", labelcolor="#8691A5")
-    ax.xaxis.set_major_locator(MonthLocator(interval=6))
-    ax.xaxis.set_minor_locator(MonthLocator())
+    ax.xaxis.set_major_locator(MonthLocator(interval=3))
     ax.xaxis.set_ticklabels([])
 
     # 设置 Y 轴
+    plot_days = (date - plot_start).days + 1
     max_view = 2000
-    if days < 657:
-        max_view = int(2000 - 1.2 * (658 - days))
-    elif days < 728:
-        max_view = 200 * (days - 658) + 2000
+    if plot_days < 657:
+        max_view = int(2000 - 1.2 * (658 - plot_days))
+    elif plot_days < 728:
+        max_view = 200 * (plot_days - 658) + 2000
     else:
-        max_view = int(16000 + 0.5 * (days - 728))
+        max_view = int(16000 + 0.5 * (plot_days - 728))
     ax.set_ylim(0, max_view)
     if max_view >= 5000:
         yticks_major = range(2000, max_view, 2000)
@@ -74,7 +72,7 @@ def plot(year, month, day, output, dpi):
     ax.text(
         0.995,
         0.985,
-        str(views[-1]),
+        str(views[(date - date_start).days]),
         color="#7C4997",
         fontsize=60,
         ha="right",
@@ -85,7 +83,7 @@ def plot(year, month, day, output, dpi):
     ax.text(
         0.995,
         0.89,
-        end_date.strftime("%Y-%m-%d"),
+        date.strftime("%Y-%m-%d"),
         color="#815252",
         fontsize=20,
         ha="right",
@@ -102,27 +100,19 @@ def plot(year, month, day, output, dpi):
 
 
 if __name__ == "__main__":
-    plot_start, plot_end, delta, plot_days, plot_frames = (
-        datetime(2020, 12, 28),
-        datetime(2025, 5, 31),
-        timedelta(days=1),
-        1,
-        1,
-    )
-    dates = drange(plot_start, plot_end + delta, delta)
-    for plot_now in tqdm(dates):
+    plot_frames = 1
+    plot_dates = drange(plot_start, date_end + timedelta(days=1), timedelta(days=1))
+    for date_num in tqdm(plot_dates):
+        plot_now = num2date(date_num).replace(tzinfo=None)
+        plot_days = (plot_now - plot_start).days + 1
         step = 1
         if plot_days <= 5 or plot_days > 1616 - 5:
             step = 5
         elif plot_days <= 65 or plot_days > 1616 - 65:
             step = 2
         plot(
-            plot_now.year,
-            plot_now.month,
-            plot_now.day,
+            plot_now,
             [f"output/{i}.png" for i in range(plot_frames, plot_frames + step)],
-            240,
         )
-        plot_now += timedelta(days=1)
         plot_days += 1
         plot_frames += step

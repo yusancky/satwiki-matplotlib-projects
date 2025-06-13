@@ -2,8 +2,9 @@ import csv
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 from matplotlib import font_manager
-from matplotlib.dates import DateFormatter, MonthLocator, drange, num2date
+from matplotlib.dates import DateFormatter, MonthLocator, drange
 from matplotlib.ticker import FixedLocator, FuncFormatter
+from tqdm import tqdm
 
 # 定义辅助函数
 def format_number(x, pos=None):
@@ -101,19 +102,20 @@ def plot(year, month, day, output, dpi):
 
 
 if __name__ == "__main__":
-    plot_now, plot_end, plot_days, plot_frames = (
+    plot_start, plot_end, delta, plot_days, plot_frames = (
         datetime(2020, 12, 28),
         datetime(2025, 5, 31),
+        timedelta(days=1),
         1,
         1,
     )
-    while plot_now <= plot_end:
+    dates = drange(plot_start, plot_end + delta, delta)
+    for plot_now in tqdm(dates):
         step = 1
         if plot_days <= 5 or plot_days > 1616 - 5:
             step = 5
         elif plot_days <= 65 or plot_days > 1616 - 65:
             step = 2
-        print(f"Plotting day {plot_days} for {step} frames.")
         plot(
             plot_now.year,
             plot_now.month,

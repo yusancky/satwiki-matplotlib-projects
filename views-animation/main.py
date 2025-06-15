@@ -33,9 +33,6 @@ plt.rcParams["font.size"] = 18
 
 
 def plot(date, output, dpi=240):
-    if output == []:
-        break
-
     # 创建图表
     fig, ax = plt.subplots(figsize=(16, 9))
     plt.title("阅读数统计", color="#1A60A6", fontsize=24)
@@ -113,7 +110,8 @@ if __name__ == "__main__":
         if plot_days <= 20 or plot_days > plot_days_all - 20:
             step = 5 - min(plot_days - 1, plot_days_all - plot_days) // 5
         elif plot_days > 850 and plot_days <= 1500 and plot_days % 2 == 0:
-            step = 0
+            plot_days += 1
+            continue
         plot(
             plot_now,
             [f"output/{i}.png" for i in range(plot_frames, plot_frames + step)],

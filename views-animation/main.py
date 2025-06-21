@@ -109,12 +109,21 @@ if __name__ == "__main__":
         step = 1
         if plot_days <= 20 or plot_days > plot_days_all - 20:
             step = 5 - min(plot_days - 1, plot_days_all - plot_days) // 5
-        elif plot_days > 850 and plot_days <= 1500 and plot_days % 2 == 0:
-            plot_days += 1
-            continue
+        elif plot_days >= 850 and plot_days <= 1500:
+            if plot_days <= 890:
+                if plot_days % 4 == 2:
+                    continue
+            elif plot_days <= 920:
+                if plot_days % 3 == 2:
+                    continue
+            elif plot_days <= 980:
+                if plot_days % 2 == 0:
+                    continue
+            else:
+                if plot_days % 3 != 0:
+                    continue
         plot(
             plot_now,
             [f"output/{i}.png" for i in range(plot_frames, plot_frames + step)],
         )
-        plot_days += 1
         plot_frames += step

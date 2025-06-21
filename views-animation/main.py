@@ -108,7 +108,7 @@ if __name__ == "__main__":
         plot_days = (plot_now - plot_start).days + 1
         step = 1
         if plot_days <= 20 or plot_days > plot_days_all - 20:
-            step = 5 - min(plot_days - 1, plot_days_all - plot_days) // 5
+            step = 3 - min(plot_days - 1, plot_days_all - plot_days) // 10
         elif plot_days >= 850 and plot_days <= 1500:
             if plot_days <= 890:
                 if plot_days % 4 == 2:

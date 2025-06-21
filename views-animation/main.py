@@ -112,7 +112,7 @@ if __name__ == "__main__":
         step = 1
         if plot_days <= 20:
             step = 3 - (plot_days - 1) // 10
-        elif plot_days >= 850 and plot_days <= 1500:
+        elif plot_days >= 850 and plot_days <= 1700:
             if plot_days <= 890:
                 if plot_days % 4 == 2:
                     continue

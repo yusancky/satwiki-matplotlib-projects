@@ -54,7 +54,10 @@ def plot(date, output, dpi=240):
     else:
         max_view = int(16000 + 0.4 * (plot_days - 728))
     ax.set_ylim(0, max_view)
-    if max_view >= 5000:
+    if max_view >= 14000:
+        yticks_major = range(2000, max_view, 2000)
+        yticks_minor = range(1000, max_view, 1000)
+    elif max_view >= 5000:
         yticks_major = range(2000, max_view, 2000)
         yticks_minor = range(500, max_view, 500)
     elif max_view >= 3000:

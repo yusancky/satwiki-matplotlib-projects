@@ -107,8 +107,8 @@ if __name__ == "__main__":
         plot_now = num2date(date_num).replace(tzinfo=None)
         plot_days = (plot_now - plot_start).days + 1
         step = 1
-        if plot_days <= 20 or plot_days > plot_days_all - 20:
-            step = 3 - min(plot_days - 1, plot_days_all - plot_days) // 10
+        if plot_days <= 20:
+            step = 3 - (plot_days - 1) // 10
         elif plot_days >= 850 and plot_days <= 1500:
             if plot_days <= 890:
                 if plot_days % 4 == 2:
@@ -120,8 +120,13 @@ if __name__ == "__main__":
                 if plot_days % 2 == 0:
                     continue
             else:
-                if plot_days % 3 != 0:
+                if plot_days % 3 != 2:
                     continue
+        elif plot_days < plot_days_all - 80:
+            if plot_days % 2 == 0:
+                continue
+        elif plot_days > plot_days_all - 20:
+            step = 5 - (plot_days_all - plot_days) // 5
         plot(
             plot_now,
             [f"output/{i}.png" for i in range(plot_frames, plot_frames + step)],

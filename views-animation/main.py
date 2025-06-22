@@ -125,7 +125,7 @@ if __name__ == "__main__":
             else:
                 if plot_days % 3 != 2:
                     continue
-        elif plot_days < plot_days_all - 80:
+        elif plot_days > 1700 and plot_days < plot_days_all - 80:
             if plot_days % 2 == 0:
                 continue
         elif plot_days > plot_days_all - 20:

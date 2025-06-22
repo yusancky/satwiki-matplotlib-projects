@@ -12,7 +12,7 @@ def format_number(x, pos=None):
 
 
 # 设置时间跨度
-date_start, date_end = datetime(2020, 6, 28), datetime(2025, 5, 31)
+date_start, date_end = datetime(2020, 6, 28), datetime(2025, 6, 21)
 plot_start = datetime(2020, 12, 28)
 dates = drange(date_start, date_end + timedelta(days=1), timedelta(days=1))
 

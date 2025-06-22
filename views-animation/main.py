@@ -12,7 +12,7 @@ def format_number(x, pos=None):
 
 
 # 设置时间跨度
-date_start, date_end = datetime(2020, 6, 28), datetime(2025, 5, 31)
+date_start, date_end = datetime(2020, 6, 28), datetime(2025, 6, 21)
 plot_start = datetime(2020, 12, 28)
 dates = drange(date_start, date_end + timedelta(days=1), timedelta(days=1))
 
@@ -47,14 +47,17 @@ def plot(date, output, dpi=240):
     # 设置 Y 轴
     plot_days = (date - plot_start).days + 1
     max_view = 2000
-    if plot_days < 657:
-        max_view = int(2000 - 1.2 * (658 - plot_days))
+    if plot_days < 478:
+        max_view = int(2000 - 1.5 * (478 - plot_days))
     elif plot_days < 728:
-        max_view = 200 * (plot_days - 658) + 2000
+        max_view = 56 * (plot_days - 478) + 2000
     else:
-        max_view = int(16000 + 0.5 * (plot_days - 728))
+        max_view = int(16000 + 0.4 * (plot_days - 728))
     ax.set_ylim(0, max_view)
-    if max_view >= 5000:
+    if max_view >= 14000:
+        yticks_major = range(2000, max_view, 2000)
+        yticks_minor = range(1000, max_view, 1000)
+    elif max_view >= 5000:
         yticks_major = range(2000, max_view, 2000)
         yticks_minor = range(500, max_view, 500)
     elif max_view >= 3000:
@@ -102,17 +105,33 @@ def plot(date, output, dpi=240):
 if __name__ == "__main__":
     plot_frames = 1
     plot_dates = drange(plot_start, date_end + timedelta(days=1), timedelta(days=1))
+    plot_days_all = len(plot_dates)
     for date_num in tqdm(plot_dates):
         plot_now = num2date(date_num).replace(tzinfo=None)
         plot_days = (plot_now - plot_start).days + 1
         step = 1
-        if plot_days <= 5 or plot_days > 1616 - 5:
-            step = 5
-        elif plot_days <= 65 or plot_days > 1616 - 65:
-            step = 2
+        if plot_days <= 20:
+            step = 3 - (plot_days - 1) // 10
+        elif plot_days >= 850 and plot_days <= 1700:
+            if plot_days <= 890:
+                if plot_days % 4 == 2:
+                    continue
+            elif plot_days <= 920:
+                if plot_days % 3 == 2:
+                    continue
+            elif plot_days <= 980:
+                if plot_days % 2 == 0:
+                    continue
+            else:
+                if plot_days % 3 != 2:
+                    continue
+        elif plot_days > 1700 and plot_days < plot_days_all - 80:
+            if plot_days % 2 == 0:
+                continue
+        elif plot_days > plot_days_all - 20:
+            step = 5 - (plot_days_all - plot_days) // 5
         plot(
             plot_now,
             [f"output/{i}.png" for i in range(plot_frames, plot_frames + step)],
         )
-        plot_days += 1
         plot_frames += step
